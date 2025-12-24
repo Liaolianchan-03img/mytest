@@ -1,85 +1,63 @@
 import streamlit as st
-import time
 
-# 设置页面标题
-st.title("简易音乐播放器")
+# 设置页面
+st.set_page_config(
+    page_title="还珠格格第一部",
+    page_icon="▶️",
+    layout="centered"
+)
 
-# 初始化会话状态
-if "current_idx" not in st.session_state:
-    st.session_state.current_idx = 0
-if "is_playing" not in st.session_state:
-    st.session_state.is_playing = False
-if "progress" not in st.session_state:
-    st.session_state.progress = 0
+# 黑色背景
+st.markdown("""
+<style>
+    body, .stApp { background-color: #000000; }
+</style>
+""", unsafe_allow_html=True)
 
-# 歌曲数据
-songs = [
-    {
-        "title": "梦幻诛仙",
-        "artist": "张碧晨",
-        "duration": "4：04",
-        "cover": "http://p2.music.126.net/Lerc6tdw236Nvqtf7eBOVg==/18494885091647682.jpg?param=130y130",
-        "audio": "https://music.163.com/song/media/outer/url?id=438456232"
+# 三集视频数据
+videos = {
+    1: {
+        "title": "猫猫第一部 - 第1集",
+        "url": "https://www.w3school.com.cn/example/html5/mov_bbb.mp4"
     },
-    {
-        "title": "一路生花",
-        "artist": "温奕芯", 
-        "duration": "2:46",
-        "cover": "http://p2.music.126.net/3LxRV-THxeSUsTfM-F3WvQ==/109951170731176266.jpg?param=130y130",
-        "audio": "https://music.163.com/song/media/outer/url?id=2695879285"
+    2: {
+        "title": "猫猫第一部 - 第2集",
+        "url": "https://www.w3school.com.cn/example/html5/mov_bbb.mp4"
     },
-    {
-        "title": "解药",
-        "artist": "队长",
-        "duration": "3:51", 
-        "cover": "http://p2.music.126.net/yxVm_vRFOode6yP67NmMcA==/109951166625738075.jpg?param=130y130",
-        "audio": "https://music.163.com/song/media/outer/url?id=1895330088"
+    3: {
+        "title": "还珠格格第一部 - 第3集",
+        "url": "https://media.w3.org/2010/05/sintel/trailer.mp4"
     }
-]
+}
 
-# 切换函数
-def prev_song():
-    st.session_state.current_idx = (st.session_state.current_idx - 1) % len(songs)
-    st.session_state.progress = 0
+# 保存当前集数
+if "current" not in st.session_state:
+    st.session_state.current = 1
 
-def next_song():
-    st.session_state.current_idx = (st.session_state.current_idx + 1) % len(songs)
-    st.session_state.progress = 0
+# 视频标题
+st.markdown(f"""
+<div style="color: white; text-align: center; font-size: 20px; font-weight: bold; margin: 10px 0;">
+    {videos[st.session_state.current]["title"]}
+</div>
+""", unsafe_allow_html=True)
 
-# 播放控制
-def toggle_play():
-    st.session_state.is_playing = not st.session_state.is_playing
+# 播放视频
+st.video(videos[st.session_state.current]["url"])
 
-# 获取当前歌曲
-current_song = songs[st.session_state.current_idx]
-
-# 显示专辑封面和歌曲信息
-col1, col2 = st.columns([2, 3])
+# 三集选择按钮
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.image(current_song["cover"], caption="专辑封面", width=250)
+    if st.button("第1集", use_container_width=True, type="primary" if st.session_state.current == 1 else "secondary"):
+        st.session_state.current = 1
+        st.rerun()
 
 with col2:
-    st.markdown(f"## {current_song['title']}")
-    st.markdown(f"**歌手**: {current_song['artist']}")
-    st.markdown(f"**时长**: {current_song['duration']}")
+    if st.button("第2集", use_container_width=True, type="primary" if st.session_state.current == 2 else "secondary"):
+        st.session_state.current = 2
+        st.rerun()
 
-# 控制按钮
-col3, col4 = st.columns(2)
 with col3:
-    st.button("上一首", on_click=prev_song)
-with col4:
-    st.button("下一首", on_click=next_song)
-
-# 播放/暂停按钮
-play_text = "⏸️ 暂停" if st.session_state.is_playing else "▶️ 播放"
-st.button(play_text, on_click=toggle_play)
-
-# 进度条
-st.progress(st.session_state.progress / 100)
-
-# 时间显示
-st.markdown(f"0:00 / {current_song['duration']}")
-
-# 音频播放器
-st.audio(current_song["audio"])
+    if st.button("第3集", use_container_width=True, type="primary" if st.session_state.current == 3 else "secondary"):
+        st.session_state.current = 3
+        st.rerun()
